@@ -1,0 +1,130 @@
+<h4>Welcome, <%= current_user.first_name.capitalize %>!</h4>
+
+<table class= "table">
+    <th>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Host</th>
+            <th>Actions/Status</th>
+        </tr>
+    </th>
+    <tbody>
+        <%  @events.each do |event| %>
+            <tr>
+                <td><a href="<%= event_path event.id %>"><%= event.name %></a></td>
+                <td><%= event.date %></td>
+                <td><%= event.city %></td>
+                <td><%= event.user.first_name %></td>
+                <td>
+                    <% if event.user == current_user %>
+                        <form action="<%= delete_event_path event.id %>" method= "post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+                            <input type="hidden" name="_method" value= "delete"/>
+                            <input type="hidden" name="event_id" value="<%= event.id  %>"/>
+                            <button class="btn btn-sm btn-warning" type="submit">Delete</button>
+                        </form>
+                    <% else %> 
+                        <% if event.attendees.include? current_user  %>
+                        Joined 
+                            <form action="<%= leave_event_path %>" method= "post">
+                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+                                <input type="hidden" name="attend[event_id]" value="<%= event.id  %>"/>
+                                <input type="hidden" name="_method" value="delete"/>
+                                <button class="btn btn-sm btn-warning" type="submit">Cancel</button>
+                            </form>
+                        <% else %>
+                            <form action="<%= join_event_path %>" method= "post">
+                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+                                <input type="hidden" name="attend[event_id]" value="<%= event.id  %>"/>
+                                <button class="btn btn-sm btn-primary" type="submit">Join</button>
+                            </form>
+                        <% end %>  
+                    <% end %>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+
+</table>
+<table class= "table">
+<th>
+    <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>State</th>
+        <th>Host</th>
+        <th>Actions/Status</th>
+    </tr>
+</th>
+<tbody>
+    <%  @out_of_state.each do |event| %>
+        <tr>
+            <td><a href="<%= event_path event.id %>"><%= event.name %></a></td>
+            <td><%= event.date %></td>
+            <td><%= event.city %></td>
+            <td><%= event.state %></td>
+            <td><%= event.user.first_name %></td>
+            <td>
+                <% if event.user == current_user %>
+                    <form action="<%= delete_event_path event.id %>" method= "post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+                            <input type="hidden" name="_method" value= "delete"/>
+                            <input type="hidden" name="event_id" value="<%= event.id  %>"/>
+                            <button class="btn btn-sm btn-warning" type="submit">Delete</button>
+                    </form>
+                <% else %>
+                    <% if event.attendees.include? current_user  %>
+                        Joined 
+                        <form action="<%= leave_event_path %>" method= "post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+                            <input type="hidden" name="attend[event_id]" value="<%= event.id  %>"/>
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button class="btn btn-sm btn-warning" type="submit">Cancel</button>
+                        </form>
+                    <% else %>
+                        <form action="<%= join_event_path %>" method= "post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+                            <input type="hidden" name="attend[event_id]" value="<%= event.id  %>"/>
+                            <button class="btn btn-sm btn-primary" type="submit">Join</button>
+                        </form>
+                    <% end %>   
+                <% end %>              
+            </td>
+        </tr>
+    <% end %>
+</tbody>
+
+</table>
+<h5>Add Event</h5>
+
+<div class ="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <form action="<%= create_event_path %>" method="post" class="form">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token  %>"/>
+            <div class="form-group">
+                <input type="text" name= "event[name]" class="form-control" id="name" placeholder="Name">                
+            </div>
+            <div class="form-group">                
+                <input type="date" name= "event[date]" class="form-control" id="date" placeholder="Date">
+            </div>
+            <div class="form-group"> 
+                <div class="row">  
+                    <div class="col-md-9">            
+                        <input type="text" name= "event[city]"  class="form-control" id="city" placeholder="City">
+                    </div>
+                    <div class="col-md-3">       
+                        <input type="text" name= "event[state]"  class="form-control" id="state" placeholder="State">               
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Add Event</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-2"></div>
+</div>

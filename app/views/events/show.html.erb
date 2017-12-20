@@ -1,0 +1,55 @@
+ <div class="row">
+ <div class= "col-sm-6">
+    <h5><%= @event.name %></h5>
+
+    <p>Host: <%= @event.user.first_name %></p>
+    <p>Date: <%= @event.date %></p>
+    <p>Location: <%= @event.city %>, <%= @event.state.upcase %></p>
+
+    <p>People who are joining the event: <%= @event.attendees.count %></p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>State</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @event.attendees.each do |user| %>
+                    <% if user != @event.user %>
+                        <tr>
+                            <td><%= user.first_name %> <%= user.last_name %></td>
+                            <td><%= user.city %></td>
+                            <td><%= user.state.upcase %><td>
+                        </tr>
+                    <% end %>    
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class= "col-md-6">
+        <h4>Discussion about this event:</h4>
+        <div id="messages">
+            <% if @event.messages %>
+                <% @event.messages.each do |message| %>
+                    <p>
+                        <%= message.user.first_name %> says: <%= message.content %>
+
+                    </p>
+                <% end %>
+            <% else %>
+                <p>Empty</p>
+
+            <% end %>    
+
+        </div> 
+        <form action ="<%= create_message_path %>" method = "post">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"/>
+            <input type="hidden" name="message[event_id]" value="<%= @event.id %>" />
+            <textarea name="message[content]"></textarea>
+            <button type="submit">Submit Comments</button>
+        </form>
+    </div>
+</div>
